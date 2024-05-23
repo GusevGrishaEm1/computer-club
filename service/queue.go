@@ -1,7 +1,7 @@
-package util
+package service
 
 type Node struct {
-	Value interface{}
+	Value client
 	Next  *Node
 }
 
@@ -15,7 +15,7 @@ func NewQueue() *Queue {
 	return &Queue{}
 }
 
-func (q *Queue) Enqueue(value interface{}) {
+func (q *Queue) Enqueue(value client) {
 	node := &Node{Value: value}
 	if q.Head == nil {
 		q.Head = node
@@ -27,9 +27,9 @@ func (q *Queue) Enqueue(value interface{}) {
 	q.Size++
 }
 
-func (q *Queue) Dequeue() (interface{}, bool) {
+func (q *Queue) Dequeue() (client, bool) {
 	if q.Head == nil {
-		return nil, false
+		return client(""), false
 	}
 	value := q.Head.Value
 	q.Head = q.Head.Next

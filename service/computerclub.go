@@ -6,7 +6,6 @@ package service
 
 import (
 	"bufio"
-	"computer_club/util"
 	"fmt"
 	"os"
 	"sort"
@@ -83,7 +82,7 @@ type computerClub struct {
 	costOfHour         int
 	freeTables         int
 	countOfTables      int
-	queueOfClients     *util.Queue
+	queueOfClients     *Queue
 	outputs            []string
 	outputsAfterEnd    []string
 }
@@ -156,7 +155,7 @@ func (c *computerClub) parseConfig(scanner *bufio.Scanner) error {
 	c.costOfHour = costOfHour
 	c.clients = make(map[client]table)
 	c.tablesAndHours = make(map[table]time.Duration, numTables)
-	c.queueOfClients = util.NewQueue()
+	c.queueOfClients = NewQueue()
 
 	return nil
 }
@@ -307,16 +306,13 @@ func (c *computerClub) updateTableUsage(val table, currentTime time.Time) {
 // processQueue обрабатывает очередь клиентов.
 func (c *computerClub) processQueue(event event, val table) {
 	if c.queueOfClients.Size > 0 {
-		el, ok := c.queueOfClients.Dequeue()
+		client, ok := c.queueOfClients.Dequeue()
 		if ok {
-			client, ok := el.(client)
-			if ok {
-				c.clients[client] = val
-				c.outputs = append(c.outputs, fmt.Sprintf("%02d:%02d %d %s %d", event.time.Hour(), event.time.Minute(), CLIENT_POP_QUEUE, client, val))
-				c.tablesAndStartTime[val] = event.time
-				c.clients[client] = val
-				c.freeTables--
-			}
+			c.clients[client] = val
+			c.outputs = append(c.outputs, fmt.Sprintf("%02d:%02d %d %s %d", event.time.Hour(), event.time.Minute(), CLIENT_POP_QUEUE, client, val))
+			c.tablesAndStartTime[val] = event.time
+			c.clients[client] = val
+			c.freeTables--
 		}
 	}
 }
